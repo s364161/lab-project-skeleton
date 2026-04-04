@@ -83,10 +83,10 @@ if __name__ == "__main__": # RICORDA DI FARE PUSH ALLA FINE
     for epoch in range(1, num_epochs + 1):
         start_time = time.time()
 
-        train(epoch, model, train_loader, criterion, optimizer)
+        train(epoch, model, train_loader, criterion, optimizer, device)
 
         # At the end of each training iteration, perform a validation step
-        val_accuracy = validate(model, val_loader, criterion)
+        val_accuracy = validate(model, val_loader, criterion, device)
 
         end_time = time.time()
         epoch_time = end_time - start_time
