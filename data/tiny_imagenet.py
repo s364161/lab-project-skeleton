@@ -6,7 +6,7 @@ import torchvision.transforms as T
 
 def get_loaders(batch_size=32):
     # --- Il tuo codice di riorganizzazione (Modifica minima: controllo if) ---
-    data_root = 'data/tiny-imagenet/tiny-imagenet-200'
+    data_root = 'dataset/tiny-imagenet/tiny-imagenet-200'
     val_path = os.path.join(data_root, 'val')
     
     # Eseguiamo la riorganizzazione solo se la cartella 'images' esiste ancora
