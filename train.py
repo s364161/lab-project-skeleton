@@ -2,10 +2,10 @@ import time
 import torch
 
 from torch import nn
-from network.py import CustomNet
+from models.network import CustomNet
 from data.tiny_imagenet import get_loaders
 
-### RIPRENDI IL TUO LAVORO DA QUI dai
+### RIPRENDI IL TUO LAVORO DA QUI dai dai
 # guarda la lezione minuto 11:42 per capire se mettere train e val def dentro utils oppure come funzioni del train.py
 # scopri inoltre eval.py a che cosa serve
 # prova a runnare il codice su colab
