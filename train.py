@@ -10,6 +10,7 @@ from data.tiny_imagenet import get_loaders
 # scopri inoltre eval.py a che cosa serve
 # prova a runnare il codice su colab
 # inserisci una visualizzazione con wandb e poi hai finito con il lab3
+#  wandb devi inserirlo nei requirements.txt e poi sul colab chiami !pip install requirements.txt
 
 if __name__ == "__main__": # RICORDA DI FARE PUSH ALLA FINE
 
