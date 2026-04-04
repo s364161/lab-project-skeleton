@@ -1,5 +1,6 @@
 import time
 import torch
+import wandb
 
 from torch import nn
 from models.network import CustomNet
@@ -41,6 +42,8 @@ def train(epoch, model, train_loader, criterion, optimizer, device):
     train_accuracy = 100. * correct / total
     print(f'Train Epoch: {epoch} | Loss: {train_loss:.6f} | Acc: {train_accuracy:.2f}%')
 
+    return train_loss, train_accuracy
+
 # --- Funzione di Validazione ---
 def validate(model, val_loader, criterion, device):
     model.eval()
@@ -62,9 +65,25 @@ def validate(model, val_loader, criterion, device):
     val_loss = val_loss / len(val_loader)
     val_accuracy = 100. * correct / total
     print(f'Validation | Loss: {val_loss:.6f} | Acc: {val_accuracy:.2f}%')
-    return val_accuracy
+    return val_loss, val_accuracy
 
 if __name__ == "__main__": # RICORDA DI FARE PUSH ALLA FINE
+
+    # INIZIALIZZAZIONE DEGLI IPERPARAMETRI
+
+    lr = 0.01
+    momentum = 0.9
+    num_epochs = 5
+
+    wandb.init(
+        project="tiny-imagenet-lab",
+        config={
+            "learing_rate": lr,
+            "architecture": "CustomNet", 
+            "dataset": "TinyImageNet", 
+            "epochs": num_epochs
+        }
+    )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Lavoro su: {device}")
@@ -72,26 +91,35 @@ if __name__ == "__main__": # RICORDA DI FARE PUSH ALLA FINE
     train_loader, val_loader = get_loaders(batch_size=32)
 
     model = CustomNet().cuda()
+    wandb.watch(model, log="all")
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+    optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=momentum)
 
     best_acc = 0
 
     # Run the training process for {num_epochs} epochs
-    num_epochs = 5
+    # num_epochs = 5
     for epoch in range(1, num_epochs + 1):
         start_time = time.time()
 
-        train(epoch, model, train_loader, criterion, optimizer, device)
+        t_loss, t_acc = train(epoch, model, train_loader, criterion, optimizer, device)
 
         # At the end of each training iteration, perform a validation step
-        val_accuracy = validate(model, val_loader, criterion, device)
+        v_loss, val_accuracy = validate(model, val_loader, criterion, device)
 
         end_time = time.time()
         epoch_time = end_time - start_time
         print(f"Epoch duration: {epoch_time:2f} seconds")
         print()
+
+        wandb.log({
+            "epoch": epoch,
+            "train/loss": t_loss,
+            "train/acc": t_acc,
+            "val/acc": val_accuracy,
+            "learning_rate": optimizer.param_groups[0]['lr']
+        })
 
         # Best validation accuracy
         best_acc = max(best_acc, val_accuracy)
